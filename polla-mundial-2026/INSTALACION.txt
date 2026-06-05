@@ -1,0 +1,342 @@
+============================================================
+   POLLA COPA MUNDIAL 2026 - GUIA DE INSTALACION
+   Proyecto Laravel 12 (PHP 8.2+) - JGCV
+============================================================
+
+Esta guia explica paso a paso como dejar el proyecto funcionando
+en CUALQUIER computador (Windows, macOS o Linux), desde cero.
+
+Lee con calma. Cada paso incluye el comando exacto que debes
+escribir en la terminal (CMD, PowerShell, Git Bash o Terminal).
+
+
+============================================================
+0) ¿QUE NECESITAS INSTALAR ANTES? (REQUISITOS)
+============================================================
+
+Debes tener instalado en el PC:
+
+  1. PHP 8.2 o superior            -> https://www.php.net/downloads
+  2. Composer (gestor de PHP)      -> https://getcomposer.org/download
+  3. Node.js 18 o superior + npm   -> https://nodejs.org  (version LTS)
+  4. MySQL 8.0+ o MariaDB 10.5+    -> XAMPP / Laragon / MySQL Server
+  5. Git                           -> https://git-scm.com/downloads
+
+CONSEJO PARA WINDOWS (lo mas facil):
+  Instala "Laragon" (https://laragon.org) o "XAMPP"
+  (https://www.apachefriends.org). Ambos traen PHP + MySQL juntos.
+  Composer se instala aparte con su instalador para Windows.
+
+COMO VERIFICAR QUE TODO ESTA INSTALADO:
+  Abre una terminal y escribe (uno por uno):
+
+      php -v
+      composer -V
+      node -v
+      npm -v
+      git --version
+      mysql --version
+
+  Si cada comando muestra un numero de version, vas bien.
+  Si alguno dice "no se reconoce el comando", ese programa
+  no esta instalado o no esta en el PATH del sistema.
+
+  NOTA WINDOWS (PHP en el PATH):
+  Si usas Laragon, abre la terminal desde el boton "Terminal"
+  de Laragon y ya tendras php/composer disponibles.
+  Si usas XAMPP, agrega la carpeta C:\xampp\php al PATH de Windows.
+
+
+============================================================
+1) DESCARGAR EL PROYECTO
+============================================================
+
+Opcion A - Con Git (recomendada):
+
+    git clone https://github.com/jaisuarez4477-cloud/Mundial2026.git
+    cd Mundial2026/polla-mundial-2026
+
+Opcion B - Descargar ZIP:
+    En GitHub: boton verde "Code" -> "Download ZIP".
+    Descomprime y entra a la carpeta:
+        Mundial2026/polla-mundial-2026
+
+IMPORTANTE:
+  El codigo de la aplicacion esta DENTRO de la carpeta
+  "polla-mundial-2026". TODOS los comandos de aqui en adelante
+  se ejecutan DENTRO de esa carpeta.
+
+  Para confirmar que estas en el lugar correcto, escribe:
+      dir        (en Windows)
+      ls         (en Mac/Linux)
+  Debes ver archivos como: artisan, composer.json, package.json
+
+
+============================================================
+2) INSTALAR LAS DEPENDENCIAS DE PHP (Composer)
+============================================================
+
+Dentro de la carpeta polla-mundial-2026 ejecuta:
+
+    composer install
+
+Esto crea la carpeta "vendor" con Laravel y todas las librerias.
+Puede tardar unos minutos la primera vez.
+
+
+============================================================
+3) INSTALAR LAS DEPENDENCIAS DEL FRONTEND (Node)
+============================================================
+
+    npm install
+
+Esto crea la carpeta "node_modules" (Vite, Tailwind, etc.).
+
+
+============================================================
+4) CREAR EL ARCHIVO DE CONFIGURACION (.env)
+============================================================
+
+El proyecto trae un archivo de ejemplo llamado ".env.example".
+Hay que copiarlo a ".env":
+
+  En Windows (CMD):
+      copy .env.example .env
+
+  En Windows (PowerShell):
+      Copy-Item .env.example .env
+
+  En Mac / Linux / Git Bash:
+      cp .env.example .env
+
+
+============================================================
+5) GENERAR LA CLAVE DE LA APLICACION
+============================================================
+
+    php artisan key:generate
+
+Esto rellena el valor APP_KEY dentro del archivo .env.
+(Es obligatorio, si no, la app no arranca.)
+
+
+============================================================
+6) CONFIGURAR LA BASE DE DATOS EN EL ARCHIVO .env
+============================================================
+
+Abre el archivo ".env" con cualquier editor de texto
+(Bloc de notas, VS Code, etc.) y busca la seccion de la
+base de datos. Dejala asi (este proyecto usa MySQL):
+
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=polla_mundial_2026
+    DB_USERNAME=root
+    DB_PASSWORD=
+
+  - DB_USERNAME suele ser "root".
+  - DB_PASSWORD: si tu MySQL no tiene contrasena, dejalo vacio.
+    Si tiene, escribela despues del "=".
+  - Quita el "#" del inicio de esas lineas si lo tienen
+    (descomentar), para que queden activas.
+
+Mientras tienes el .env abierto, para EVITAR errores comunes
+de sesiones/cache, deja estas tres lineas asi:
+
+    SESSION_DRIVER=file
+    CACHE_STORE=file
+    QUEUE_CONNECTION=sync
+
+(Asi no se necesitan tablas extra de sistema y todo funciona
+de inmediato. Guarda y cierra el archivo.)
+
+
+============================================================
+7) CREAR LA BASE DE DATOS Y SUS TABLAS
+============================================================
+
+7.1) CREAR LA BASE DE DATOS Y LAS TABLAS PRINCIPALES
+     -------------------------------------------------
+  Abre tu gestor de MySQL: phpMyAdmin (viene con XAMPP/Laragon),
+  MySQL Workbench, o la consola de MySQL.
+
+  Ejecuta el SCRIPT SQL COMPLETO del proyecto (el que crea la
+  base "polla_mundial_2026" con todas las tablas: roles, usuarios,
+  equipos, grupos, partidos, pronosticos, premios, etc.).
+
+  -> Si lo tienes en un archivo .sql, en phpMyAdmin usa la
+     pestana "Importar" y selecciona el archivo.
+  -> O pega el contenido en la pestana "SQL" y pulsa "Continuar".
+
+7.2) CREAR LA TABLA "resultados_especiales" (IMPORTANTE)
+     -------------------------------------------------
+  Esta tabla es necesaria para el calculo automatico de puntos
+  de las predicciones especiales (clasificados, campeon, etc.).
+
+  TIENES DOS FORMAS (elige UNA):
+
+  FORMA A - Con un comando de Laravel:
+      php artisan migrate
+
+      (Crea la tabla resultados_especiales y las tablas internas
+       de Laravel. No daña tus tablas en espanol.)
+
+  FORMA B - Manual con SQL:
+      Ejecuta en MySQL el archivo que esta en:
+          database/sql/resultados_especiales.sql
+      (Abrelo, copia su contenido y ejecutalo en phpMyAdmin.)
+
+  NOTA: Si la FORMA A te da algun error de "tabla ya existe",
+        usa la FORMA B (el SQL) y listo.
+
+
+============================================================
+8) COMPILAR LOS ESTILOS DEL FRONTEND
+============================================================
+
+Para uso normal (genera los archivos finales una sola vez):
+
+    npm run build
+
+(Opcional - solo si vas a modificar estilos en tiempo real,
+ deja este comando corriendo en otra terminal:)
+
+    npm run dev
+
+
+============================================================
+9) ¡ARRANCAR EL PROYECTO!
+============================================================
+
+    php artisan serve
+
+Veras un mensaje como:
+
+    INFO  Server running on [http://127.0.0.1:8000]
+
+Abre esa direccion en tu navegador:
+
+    http://127.0.0.1:8000
+
+Para DETENER el servidor: presiona  Ctrl + C  en la terminal.
+
+
+============================================================
+10) CREAR UN USUARIO ADMINISTRADOR
+============================================================
+
+El sistema permite REGISTRARSE desde la pagina, pero esos
+usuarios quedan como "participante". Para tener un ADMIN:
+
+PASO 1: Entra a http://127.0.0.1:8000 y REGISTRA una cuenta
+        normal (nombre, correo, contrasena).
+
+PASO 2: Convierte esa cuenta en administrador. En tu gestor
+        de MySQL ejecuta (cambia el correo por el tuyo):
+
+    USE polla_mundial_2026;
+    UPDATE usuarios
+       SET rol_id = 1
+     WHERE email = 'tu_correo@ejemplo.com';
+
+  (rol_id = 1 es admin, rol_id = 2 es participante.)
+
+PASO 3: Cierra sesion y vuelve a entrar. Ahora veras el
+        menu de administracion (Equipos, Grupos, Partidos,
+        Goleadores, Premios, Notificaciones, Cierre y puntos).
+
+
+============================================================
+RESUMEN RAPIDO (para la proxima vez)
+============================================================
+
+La PRIMERA vez (instalacion completa):
+
+    git clone https://github.com/jaisuarez4477-cloud/Mundial2026.git
+    cd Mundial2026/polla-mundial-2026
+    composer install
+    npm install
+    copy .env.example .env          (o cp en Mac/Linux)
+    php artisan key:generate
+    (editar .env: datos de MySQL + SESSION_DRIVER=file)
+    (importar el SQL en MySQL + crear tabla resultados_especiales)
+    npm run build
+    php artisan serve
+
+Las SIGUIENTES veces (solo arrancar):
+
+    cd Mundial2026/polla-mundial-2026
+    php artisan serve
+
+Si descargaste cambios nuevos del repositorio:
+
+    git pull
+    composer install
+    npm install
+    npm run build
+    php artisan migrate            (por si hay tablas nuevas)
+    php artisan view:clear
+    php artisan route:clear
+    php artisan config:clear
+
+
+============================================================
+SOLUCION DE PROBLEMAS COMUNES
+============================================================
+
+* "No application encryption key has been specified."
+  -> Falta la clave. Ejecuta:  php artisan key:generate
+
+* Pantalla en blanco o error 500 / "could not find driver"
+  -> Falta la extension de MySQL en PHP. Activa "pdo_mysql"
+     en el archivo php.ini (quita el ";" delante de
+     extension=pdo_mysql) y reinicia.
+
+* "SQLSTATE[HY000] [1045] Access denied for user 'root'"
+  -> Usuario o contrasena de MySQL incorrectos en el .env.
+     Revisa DB_USERNAME y DB_PASSWORD.
+
+* "SQLSTATE[HY000] [1049] Unknown database 'polla_mundial_2026'"
+  -> No has creado la base de datos. Ejecuta el script SQL
+     (paso 7) en MySQL antes de arrancar.
+
+* "Base table or view not found: resultados_especiales"
+  -> Falta esa tabla. Haz el paso 7.2 (migrate o el SQL).
+
+* La pagina se ve sin estilos (texto plano)
+  -> No compilaste el frontend. Ejecuta:  npm run build
+
+* "vendor/autoload.php not found" o "Class not found"
+  -> No instalaste dependencias. Ejecuta:  composer install
+
+* Cambios que no aparecen / comportamiento raro
+  -> Limpia la cache:
+         php artisan view:clear
+         php artisan route:clear
+         php artisan config:clear
+
+* El puerto 8000 esta ocupado
+  -> Usa otro puerto:  php artisan serve --port=8080
+     y entra a  http://127.0.0.1:8080
+
+* "MySQL server has gone away" o no conecta
+  -> Asegurate de que MySQL este ENCENDIDO (en XAMPP/Laragon,
+     pulsa "Start" en MySQL antes de arrancar el proyecto).
+
+
+============================================================
+NOTAS SOBRE LAS NOTIFICACIONES POR WHATSAPP
+============================================================
+
+  - El envio por WhatsApp NO requiere ninguna API de pago.
+  - Usa enlaces de WhatsApp (wa.me). Al pulsar "Enviar" en el
+    panel de Notificaciones, se abre WhatsApp (Web o la app)
+    con el mensaje ya escrito, listo para enviar.
+  - Para que funcione, el participante debe tener su numero de
+    WhatsApp registrado (con codigo de pais, ej: +573001234567).
+
+
+============================================================
+   FIN DE LA GUIA - Mundial 2026 - JGCV
+============================================================
