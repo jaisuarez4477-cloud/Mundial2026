@@ -123,6 +123,8 @@
         }
         .form-input-dark:focus{border-color:rgba(200,146,42,.7)}
         .form-input-dark::placeholder{color:rgba(245,247,250,.28)}
+        .form-label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500;letter-spacing:.3px}
+        textarea.form-input-dark{resize:vertical;min-height:80px;font-family:'Barlow',sans-serif}
         .score-input{
             width:48px;text-align:center;background:var(--input);border:1px solid var(--input-b);
             border-radius:8px;color:var(--white);font-size:18px;font-weight:600;
@@ -202,6 +204,15 @@ select.form-input-dark option:checked {
                 <a href="{{ route('admin.partidos') }}" class="nav-link {{ request()->routeIs('admin.partidos') ? 'active' : '' }}">
                     <i class="ti ti-ball-football"></i> Partidos
                 </a>
+                <a href="{{ route('admin.goleadores') }}" class="nav-link {{ request()->routeIs('admin.goleadores') ? 'active' : '' }}">
+                    <i class="ti ti-shoe"></i> Goleadores
+                </a>
+                <a href="{{ route('admin.premios') }}" class="nav-link {{ request()->routeIs('admin.premios') ? 'active' : '' }}">
+                    <i class="ti ti-cash-banknote"></i> Premios
+                </a>
+                <a href="{{ route('admin.notificaciones') }}" class="nav-link {{ request()->routeIs('admin.notificaciones') ? 'active' : '' }}">
+                    <i class="ti ti-bell"></i> Notificaciones
+                </a>
                 <a href="{{ route('admin.usuarios') }}" class="nav-link {{ request()->routeIs('admin.usuarios') ? 'active' : '' }}">
                     <i class="ti ti-users"></i> Usuarios
                 </a>
@@ -215,6 +226,19 @@ select.form-input-dark option:checked {
             <a href="{{ route('pronosticos') }}" class="nav-link {{ request()->routeIs('pronosticos') ? 'active' : '' }}">
                 <i class="ti ti-writing"></i> Pronósticos
             </a>
+
+            <div class="nav-section">Predicciones</div>
+            <a href="{{ route('predicciones.grupos') }}" class="nav-link {{ request()->routeIs('predicciones.grupos') ? 'active' : '' }}">
+                <i class="ti ti-list-numbers"></i> Posiciones de grupos
+            </a>
+            <a href="{{ route('predicciones.especiales') }}" class="nav-link {{ request()->routeIs('predicciones.especiales') ? 'active' : '' }}">
+                <i class="ti ti-tournament"></i> Clasificados y campeón
+            </a>
+            <a href="{{ route('predicciones.desempate') }}" class="nav-link {{ request()->routeIs('predicciones.desempate') ? 'active' : '' }}">
+                <i class="ti ti-award"></i> Premios individuales
+            </a>
+
+            <div class="nav-section">Clasificación</div>
             <a href="{{ route('ranking') }}" class="nav-link {{ request()->routeIs('ranking') ? 'active' : '' }}">
                 <i class="ti ti-trophy"></i> Ranking
             </a>
