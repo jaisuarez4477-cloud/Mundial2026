@@ -7,6 +7,7 @@ use App\Http\Controllers\PrediccionController;
 use App\Http\Controllers\GoleadorController;
 use App\Http\Controllers\PremioController;
 use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\ResultadoController;
 
 /*
 |──────────────────────────────────────────────────────────────
@@ -100,4 +101,9 @@ Route::middleware('sesion:admin')->prefix('admin')->name('admin.')->group(functi
     Route::post('/notificaciones/crear',          [NotificacionController::class, 'crear'])->name('notificaciones.crear');
     Route::post('/notificaciones/{id}/enviada',   [NotificacionController::class, 'marcarEnviada'])->name('notificaciones.enviada');
     Route::post('/notificaciones/{id}/eliminar',  [NotificacionController::class, 'eliminar'])->name('notificaciones.eliminar');
+
+    // ── Resultados oficiales y cálculo automático de puntos ─
+    Route::get('/resultados',                     [ResultadoController::class, 'index'])->name('resultados');
+    Route::post('/resultados/grupo/{grupoId}',    [ResultadoController::class, 'guardarPosicionesGrupo'])->name('resultados.grupo');
+    Route::post('/resultados/especial',           [ResultadoController::class, 'guardarEspecial'])->name('resultados.especial');
 });
