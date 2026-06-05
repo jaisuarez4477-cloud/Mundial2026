@@ -213,6 +213,9 @@ select.form-input-dark option:checked {
                 <a href="{{ route('admin.notificaciones') }}" class="nav-link {{ request()->routeIs('admin.notificaciones') ? 'active' : '' }}">
                     <i class="ti ti-bell"></i> Notificaciones
                 </a>
+                <a href="{{ route('admin.resultados') }}" class="nav-link {{ request()->routeIs('admin.resultados') ? 'active' : '' }}">
+                    <i class="ti ti-calculator"></i> Cierre y puntos
+                </a>
                 <a href="{{ route('admin.usuarios') }}" class="nav-link {{ request()->routeIs('admin.usuarios') ? 'active' : '' }}">
                     <i class="ti ti-users"></i> Usuarios
                 </a>
